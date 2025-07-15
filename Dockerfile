@@ -1,5 +1,8 @@
-FROM node:18-alpine
+FROM python:3.11-slim
+
 WORKDIR /app
-COPY . .
-RUN npm install
-CMD ["npm", "start"]
+COPY checker.py .
+
+RUN pip install requests
+
+CMD ["sleep", "infinity"]
