@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  hetzner-lock-cron:
+    build: .
+    container_name: hetzner-lock-cron
+    environment:
+      - HETZNER_API_TOKEN=dein_token
+      - PROJECT_ID=dein_project_id
+    restart: unless-stopped
