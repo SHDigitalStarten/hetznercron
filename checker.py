@@ -3,7 +3,8 @@ import requests
 import asyncio
 
 HETZNER_API_TOKEN = os.getenv("HETZNER_API_TOKEN")
-PROJECT_ID = os.getenv("PROJECT_ID")
+if not HETZNER_API_TOKEN:
+    raise Exception("HETZNER_API_TOKEN is missing")
 
 HEADERS = {
     "Authorization": f"Bearer {HETZNER_API_TOKEN}",
@@ -12,8 +13,9 @@ HEADERS = {
 
 async def handle_server():
     base_url = "https://api.hetzner.cloud/v1"
-
     servers_response = requests.get(f"{base_url}/servers", headers=HEADERS)
+    if servers_response.status_code == 401:
+        raise Exception("Unauthorized: Check if HETZNER_API_TOKEN is correct and has permissions!")
     servers_response.raise_for_status()
     servers = servers_response.json().get("servers", [])
 
