@@ -25,9 +25,20 @@ async def handle_server():
         updated_labels = labels.copy()
         modified = False
 
-        if labels.get("locked") != "true":
-            updated_labels["locked"] = "true"
-            modified = True
+        # Check if delete and rebuild protections are enabled
+        protection = server.get("protection", {})
+        delete_protection = protection.get("delete", False)
+        rebuild_protection = protection.get("rebuild", False)
+
+        if not delete_protection or not rebuild_protection:
+            payload = {"delete": True, "rebuild": True}
+            print(f"Enabling protection for server {server_id}: {payload}")
+            protection_resp = requests.post(
+                f"{base_url}/servers/{server_id}/actions/change_protection",
+                headers=HEADERS,
+                json=payload,
+            )
+            protection_resp.raise_for_status()
 
         if labels.get("Autobackup") != "true":
             updated_labels["Autobackup"] = "true"
